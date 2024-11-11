@@ -6,6 +6,19 @@ const App = () => {
 
   const addName = (e) => {
     e.preventDefault();
+
+    if (newName.trim() === "") {
+      alert("Please add a valid name");
+      return;
+    }
+
+    const alreadyExists = persons.find((person) => person.name === newName);
+
+    if (alreadyExists) {
+      alert(`${newName} is already added to the phonebook`);
+      return;
+    }
+
     setPersons([...persons, { name: newName }]);
     setNewName("");
   };
