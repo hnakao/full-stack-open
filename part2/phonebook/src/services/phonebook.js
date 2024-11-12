@@ -18,4 +18,9 @@ const updatePerson = async (person) => {
   return response.data;
 };
 
-export { getAllPersons, addPerson, updatePerson };
+const deletePerson = async (id) => {
+  const response = await axios.delete(`http://localhost:3001/persons/${id}`);
+  return response.data;
+};
+
+export { getAllPersons, addPerson, updatePerson, deletePerson };

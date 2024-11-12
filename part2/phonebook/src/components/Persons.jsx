@@ -1,10 +1,10 @@
-const Persons = ({ persons }) => {
+import PersonRow from "./PersonRow";
+
+const Persons = ({ persons, onDelete }) => {
   return (
     <div>
       {persons.map((person) => (
-        <div key={person.name}>
-          {person.name} {person.number}
-        </div>
+        <PersonRow key={person.id} person={person} onDelete={onDelete} />
       ))}
     </div>
   );

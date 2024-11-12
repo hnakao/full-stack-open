@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
-import { addPerson, getAllPersons } from "./services/phonebook";
+import { addPerson, deletePerson, getAllPersons } from "./services/phonebook";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -38,6 +38,16 @@ const App = () => {
     setPersons(filteredPersons);
   };
 
+  const handleDelete = async (id) => {
+    const personToDelete = persons.find((person) => person.id === id);
+    if (
+      window.confirm(`Are you sure you want to delete ${personToDelete.name}?`)
+    ) {
+      await deletePerson(id);
+      setPersons(persons.filter((person) => person.id !== id));
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -45,7 +55,7 @@ const App = () => {
       <h3>Add a new</h3>
       <PersonForm onSubmit={onSubmit} />
       <h3>Numbers</h3>
-      <Persons persons={persons} />
+      <Persons persons={persons} onDelete={handleDelete} />
     </div>
   );
 };
