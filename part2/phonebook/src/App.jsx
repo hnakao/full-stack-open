@@ -1,22 +1,22 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import { addPerson, getAllPersons } from "./services/phonebook";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
 
   useEffect(() => {
     const fetchPersons = async () => {
-      const response = await axios.get("http://localhost:3001/persons");
-      setPersons(response.data);
+      const persons = await getAllPersons();
+      setPersons(persons);
     };
 
     fetchPersons();
   }, []);
 
-  const onSubmit = (newPerson) => {
+  const onSubmit = async (newPerson) => {
     const alreadyExists = persons.find(
       (person) => person.name === newPerson.name
     );
@@ -26,7 +26,8 @@ const App = () => {
       return;
     }
 
-    setPersons([...persons, newPerson]);
+    const createdPerson = await addPerson(newPerson);
+    setPersons([...persons, createdPerson]);
   };
 
   const handleSearch = (e) => {
