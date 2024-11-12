@@ -10,10 +10,10 @@ const addPerson = async (newPerson) => {
   return response.data;
 };
 
-const updatePerson = async (person) => {
+const updatePerson = async (id, newPerson) => {
   const response = await axios.put(
-    `http://localhost:3001/persons/${person.id}`,
-    person
+    `http://localhost:3001/persons/${id}`,
+    newPerson
   );
   return response.data;
 };
