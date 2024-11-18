@@ -8,9 +8,14 @@ import {
   getAllPersons,
   updatePerson,
 } from "./services/phonebook";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
+  const [notification, setNotification] = useState({
+    message: null,
+    type: "success",
+  });
 
   useEffect(() => {
     const fetchPersons = async () => {
@@ -20,6 +25,12 @@ const App = () => {
 
     fetchPersons();
   }, []);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setNotification(null);
+    }, 3000);
+  }, [notification]);
 
   const onSubmit = async (newPerson) => {
     const alreadyExists = persons.find(
@@ -32,19 +43,36 @@ const App = () => {
           `${newPerson.name} is already added to phonebook, replace the old number with the new one?`
         )
       ) {
-        const updatedPerson = await updatePerson(alreadyExists.id, newPerson);
-        setPersons(
-          persons.map((person) =>
-            person.id === updatedPerson.id ? updatedPerson : person
-          )
-        );
-        return;
+        try {
+          const updatedPerson = await updatePerson(alreadyExists.id, newPerson);
+
+          setPersons(
+            persons.map((person) =>
+              person.id === updatedPerson.id ? updatedPerson : person
+            )
+          );
+
+          setNotification({
+            message: `Updated ${newPerson.name}`,
+            type: "success",
+          });
+          return;
+        } catch (error) {
+          if (error.response.status === 404) {
+            setNotification({
+              message: `Information of ${newPerson.name} has already been removed from server`,
+              type: "error",
+            });
+            return;
+          }
+        }
       }
       return;
     }
 
     const createdPerson = await addPerson(newPerson);
     setPersons([...persons, createdPerson]);
+    setNotification({ message: `Added ${newPerson.name}`, type: "success" });
   };
 
   const handleSearch = (e) => {
@@ -68,6 +96,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification
+        className={notification?.type}
+        message={notification?.message}
+      />
       <Filter onChange={handleSearch} />
       <h3>Add a new</h3>
       <PersonForm onSubmit={onSubmit} />
