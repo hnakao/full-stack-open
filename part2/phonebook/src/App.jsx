@@ -88,8 +88,17 @@ const App = () => {
     if (
       window.confirm(`Are you sure you want to delete ${personToDelete.name}?`)
     ) {
-      await deletePerson(id);
-      setPersons(persons.filter((person) => person.id !== id));
+      try {
+        await deletePerson(id);
+        setPersons(persons.filter((person) => person.id !== id));
+      } catch (err) {
+        if (err.response.status === 404) {
+          setNotification({
+            message: `Information of ${personToDelete.name} has already been removed from server`,
+            type: "error",
+          });
+        }
+      }
     }
   };
 
